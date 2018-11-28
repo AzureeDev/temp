@@ -18,7 +18,7 @@ function WeaponSkinModule:RegisterHook()
 
     self._assets_folders = self._config.skin_folder
 
-    local skin_data = WeaponSkinExtension:new(self._assets_folders)
+    local skin_data = WeaponSkinExtension:new(self._assets_folders, self._config.id)
 
     self._skin_design = {
         base_gradient = skin_data:get_base_gradient(),
@@ -51,7 +51,7 @@ function WeaponSkinModule:RegisterHook()
         end
 
         local config = self._config
-        
+
         bm_self.weapon_skins[config.id] = {
             name_id = config.name,
             desc_id = config.desc,
@@ -72,7 +72,7 @@ function WeaponSkinModule:RegisterHook()
             types = self._skin_design.types,
             parts = self._skin_design.parts
         }
-
+        self:log("base gradient is %s", bm_self.weapon_skins[config.id].base_gradient)
         self:log("Added skin '%s' to the weapon '%s'", config.id, config.weapon_id)
     end)
 end

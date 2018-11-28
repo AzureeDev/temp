@@ -4,13 +4,14 @@ require("lib/managers/workshop/SkinEditor")
 
 WeaponSkinExtension = WeaponSkinExtension or class()
 
-function WeaponSkinExtension:init(asset_path)
+function WeaponSkinExtension:init(asset_path, skin_id)
 
     if not asset_path or not SystemFS:exists(asset_path) then
         log("Asset directory at '" .. tostring(asset_path) .. "' do not exist.")
         return
     end
 
+    self._id = skin_id
     self._item = UGCItem:new(asset_path)
     self._item:load()
     self._path = self._item:path()
@@ -23,7 +24,16 @@ function WeaponSkinExtension:load_assets(path, path_or_tex_type)
 end
 
 function WeaponSkinExtension:get_base_gradient()
-    return string.gsub("base_gradient/" .. self._item:config().data.base_gradient_name, ".tga", "")
+    local game_path = string.gsub(self._id .. "/base_gradient/" .. self._item:config().data.base_gradient_name, ".tga", "")
+    log(tostring(game_path))
+    if not DB:has(Idstring("tga"), game_path) then
+        DB:create_entry(Idstring("tga"), Idstring(game_path), self._path .. "base_gradient/" .. self._item:config().data.base_gradient_name)
+    end
+
+    log(tostring(self._path .. "base_gradient/" .. self._item:config().data.base_gradient_name))
+
+    Application:reload_textures({Idstring(game_path)})
+    return game_path
 end
 
 function WeaponSkinExtension:get_pattern_gradient()
